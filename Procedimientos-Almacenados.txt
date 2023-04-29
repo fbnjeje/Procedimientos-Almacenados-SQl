@@ -1,0 +1,76 @@
+create database Procedimientos_almacenados_1;
+
+use Procedimientos_almacenados_1;
+
+create table libro(
+	codigo int auto_increment,
+    titulo varchar(20),
+    autor varchar(20),
+    editorial varchar (20),
+    primary key (codigo)
+    );
+    
+delimiter $
+
+	CREATE PROCEDURE crearLibro(
+		in _titulo varchar(20),
+        in _autor varchar(20),
+        in _editorial varchar(20))
+	BEGIN
+    
+    insert into libro values(NULL, _titulo,_autor,_editorial);
+    
+    END
+    
+$
+
+delimiter $
+
+create procedure crearlibro2(
+	in _titulo varchar(20),
+    in _autor varchar(20),
+    in _editorial varchar(20)
+    )
+	Begin
+    
+    set @cantidadlibros=0;
+    
+    select count(*)into @cantidadlibros from libro where titulo= _titulo;
+		if @cantidadlibros=0 then
+			insert into libro values(null, _titulo,_autor,_editorial);
+		end if;
+	
+    end
+    
+$
+
+call procedimientos_almacenados_1.crearlibro2('a', 'a', 'a');
+
+
+Create procedure crearlibro3(
+	in _titulo varchar(20),
+    in _autor varchar(20),
+    in _editorial varchar(20),
+    out _respuesta varchar(20)
+    )
+	Begin
+    
+    set @cantidadlibros=0;
+    
+    select count(*)into @cantidadlibros from libro where titulo= _titulo;
+		if @cantidadlibros=0 then
+			insert into libro values(null, _titulo,_autor,_editorial);
+            set _respuesta = 'Registro Creado';
+		else
+			set _respuesta = 'Libro ya existe';
+		end if;
+	
+    end
+    
+    
+    
+$
+
+set @_respuesta = '0';
+call procedimientos_almacenados_1.crearlibro3('a', 'a', 'a', @_respuesta);
+select @_respuesta;
